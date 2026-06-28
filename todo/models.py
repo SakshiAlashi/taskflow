@@ -8,12 +8,19 @@ class Task(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
     ]
+    Categories=[
+        ('work', 'Work'),
+        ('personal', 'Personal'),
+        ('study', 'Study'),
+        ('other', 'Other'),
+    ]
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     priority = models.CharField(max_length=10, choices=Priorities, default='medium')
     due_date = models.DateField(blank=True, null=True)
+    category = models.CharField(max_length=10, choices=Categories, default='other')
 
     def __str__(self):
         return self.title

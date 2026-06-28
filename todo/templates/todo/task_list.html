@@ -65,6 +65,7 @@
                             {% else %}
                             <span class="badge bg-secondary">Low priority</span>
                             {% endif %}
+                            <span class="badge bg-light text-dark border">{{ task.get_category_display }}</span>
                             <div class="d-flex gap-1">
                                 <form method="POST" action="{% url 'todo:task_toggle' task.pk %}">
                                     {% csrf_token %}
@@ -123,6 +124,7 @@
                             {% else %}
                             <span class="badge bg-secondary">Low priority</span>
                             {% endif %}
+                            <span class="badge bg-light text-dark border">{{ task.get_category_display }}</span>
                             <div class="d-flex gap-1">
                                 <form method="POST" action="{% url 'todo:task_toggle' task.pk %}">
                                     {% csrf_token %}
