@@ -18,6 +18,7 @@ def task_list(request):
         'total_count': total_count,
         'completed_count':completed_count,
         'pending_count':pending_count,
+        'form': TaskForm(),
     }
 
     return render(request, 'todo/task_list.html', context)
