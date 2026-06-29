@@ -1,4 +1,6 @@
 {% extends "todo/base.html" %}
+
+{% comment %} {% extends "todo/base.html" %}
 {% block content %}
     <h2>{% if task %}Edit{% else %}Add{% endif %} Task</h2>
     <form method="POST">
@@ -15,4 +17,26 @@
         <button type="submit" class="btn btn-accent">Save</button>
         <a href="{% url 'todo:task_list' %}" class="btn btn-secondary">Cancel</a>
     </form>
+{% endblock %} {% endcomment %}
+
+
+
+{% block content %}
+
+<h2>{% if task %}Edit{% else %}Add{% endif %} Task</h2>
+
+<form method="POST">
+
+    {% include "todo/task_fields.html" %}
+
+    <button type="submit" class="btn btn-accent">
+        Save
+    </button>
+
+    <a href="{% url 'todo:task_list' %}" class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>
+
 {% endblock %}

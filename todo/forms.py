@@ -1,6 +1,6 @@
 from datetime import date
 from django import forms
-from .models import Task
+from .models import Task,TodayTask
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -22,3 +22,17 @@ class TaskForm(forms.ModelForm):
             if due_date != original_due_date and due_date < date.today():
                 raise forms.ValidationError('Due date cannot be in the past.')
         return due_date
+
+class TodayTaskForm(forms.ModelForm):
+    class Meta:
+        ordering = ['created_at']
+        model = TodayTask
+        fields = ['title']
+        widgets = {
+            'title': forms.TextInput(
+                attrs={
+                    'class': 'form-control today-focus-input today-input',
+                    'placeholder': "What's your focus today?"
+                }
+            ),
+        }
