@@ -10,9 +10,10 @@ def task_list(request):
     completed_count = task.filter(completed=True).count()
     pending_count = total_count - completed_count
 
-    today_tasks = TodayTask.objects.all().order_by('created_at')
+    today_tasks = TodayTask.objects.all().order_by('completed', 'created_at')
     today_completed = today_tasks.filter(completed=True).count()
     today_pending = today_tasks.count() - today_completed
+
 
     if today_tasks.count() > 0:
         today_progress = int((today_completed / today_tasks.count()) * 100)
@@ -20,29 +21,25 @@ def task_list(request):
         today_progress = 0
 
 
-    if today_progress == 0:
-        progress_title = "🌱 Start Your Day"
-        progress_message = "Complete your first focus task."
+    if today_progress == 100:
+        progress_title = "🎉 Fantastic!"
+        progress_message = "You've completed all focus tasks today."
 
-    elif today_progress <= 25:
-        progress_title = "🚀 Good Start"
-        progress_message = "You're building momentum."
+    elif today_progress >= 75:
+        progress_title = "🔥 Almost Done"
+        progress_message = "Just a little more to finish."
 
-    elif today_progress <= 50:
+    elif today_progress >= 50:
         progress_title = "😊 Halfway There"
         progress_message = "Keep going, you're making steady progress."
 
-    elif today_progress <= 75:
-        progress_title = "🔥 Almost Finished"
-        progress_message = "Only a few focus tasks left."
-
-    elif today_progress < 100:
-        progress_title = "🎯 Final Push"
-        progress_message = "You're almost there!"
+    elif today_progress > 0:
+        progress_title = "💪 Great Start!"
+        progress_message = "You're off to a good beginning."
 
     else:
-        progress_title = "🎉 Fantastic!"
-        progress_message = "You've completed all focus tasks today."
+        progress_title = "🚀 Let's Get Started!"
+        progress_message = "Add or complete your first focus task."
 
 
     context= {

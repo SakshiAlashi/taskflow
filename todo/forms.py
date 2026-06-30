@@ -25,14 +25,19 @@ class TaskForm(forms.ModelForm):
 
 class TodayTaskForm(forms.ModelForm):
     class Meta:
-        ordering = ['created_at']
         model = TodayTask
-        fields = ['title']
+        fields = ['title',]
         widgets = {
             'title': forms.TextInput(
                 attrs={
                     'class': 'form-control today-focus-input today-input',
                     'placeholder': "What's your focus today?"
+                }
+            ),
+            'focus_time': forms.TimeInput(
+                attrs={
+                    'class': 'form-control',
+                    'type': 'time'
                 }
             ),
         }

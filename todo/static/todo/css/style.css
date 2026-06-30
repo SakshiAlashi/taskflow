@@ -19,7 +19,8 @@ body {
 
 .btn-accent {
     background-color: var(--tf-accent);
-    border-color: var(--tf-accent);
+    border:none;
+    border-radius:12px;
     color: #fff;
     font-size: 0.85rem;
     border-radius: 8px;
@@ -116,6 +117,7 @@ h2.fw-bold {
 
 .task-card .card-body {
     padding: 8px 12px;
+
 }
 
 .task-card .card-title {
@@ -161,6 +163,9 @@ h2.fw-bold {
 #searchInput {
     font-size: 0.85rem;
     border-radius: 8px;
+    height:48px;
+    border-radius:12px;
+    padding-left:16px;
 }
 .task-card-priority-high {
     border-left: 4px solid #dc2626;
@@ -184,4 +189,124 @@ h2.fw-bold {
 
 .task-card .card-text:last-of-type {
     margin-bottom: 6px;
+}
+
+.today-task-time{
+    color:#6b7280;
+    font-size:.9rem;
+    font-weight:500;
+}
+.today-progress-card .card-body{
+    padding:18px;
+}
+
+.today-input{
+    border-radius:10px;
+    height:46px;
+    font-size:0.95rem;
+}
+
+.today-input:focus{
+    box-shadow:none;
+    border-color:#4f46e5;
+}
+.today-progress-card{
+    background:#f8fcf8;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(15,23,42,.06);
+    height:310px;
+    width:100%;
+}
+
+.progress{
+    height:10px;
+    border-radius:10px;
+}
+
+.progress-bar{
+    border-radius:10px;
+}
+.progress-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:6px 0;
+}
+
+
+.focus-content{
+    flex:1;
+    min-height:0;
+    display:flex;
+    overflow:hidden;
+}
+
+.today-focus-card{
+    background:#f8fcf8;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(15,23,42,.06);
+    height:310px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+}
+.today-focus-card .card-body{
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.today-focus-card .border-bottom{
+    padding:14px 8px !important;
+    transition:.2s;
+}
+
+.today-focus-card .border-bottom:hover{
+    background:#ffffff;
+    border-radius:10px;
+}
+
+.today-task-completed{
+    color:#9ca3af;
+}
+
+.today-focus-item{
+    transition:.2s;
+}
+
+.today-focus-item:hover{
+    background:#f8fafc;
+}
+
+.focus-title, .progress-title{
+    font-size:1.05rem;
+    font-weight:700;
+    letter-spacing:-0.02em;
+
+}
+
+.focus-subtitle{
+
+    color:#6b7280;
+
+    font-size:.95rem;
+
+}
+
+.focus-stats{
+
+    font-size:1rem;
+
+    font-weight:500;
+
+}
+.today-task-list{
+    width:100%;
+    overflow-y:auto;
+    padding-right:6px;
+
+}
+.today-focus-footer{
+    flex-shrink:0;
 }
