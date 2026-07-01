@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.urls import reverse
 from .models import Task, TodayTask
 from datetime import date
+from django.http import JsonResponse
 from .forms import TaskForm , TodayTaskForm
 
 def task_list(request):
@@ -74,10 +76,15 @@ def task_create(request):
         form = TaskForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect(reverse('todo:task_list'))
-    else:
-        form = TaskForm()
-    return render("todo:task_list")
+            return JsonResponse({
+                "success": True,
+                "message": "Task created successfully."
+            })
+        
+        return JsonResponse({
+            "success": False,
+            "errors": form.errors
+        }, status=400)
 
 # Todays focus  
 def today_task_create(request):
@@ -94,17 +101,28 @@ def task_update(request, pk):
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
-            return redirect(reverse('todo:task_list'))
-    else:
-        form = TaskForm(instance=task)
-    return render(request, 'todo/task_form.html', {'form': form, 'task': task,'show_add_button': False,})
-       
+            return JsonResponse({
+                "success": True,
+                "message": "Task updated successfully."
+            })
+        
+        return JsonResponse({
+            "success": False,
+            "errors": form.errors
+        }, status=400)
+
+    return JsonResponse({"success": False}, status=405)
+    
 def task_delete(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == 'POST':
         task.delete()
-        return redirect(reverse('todo:task_list'))
-    return render("todo:task_list")
+        return JsonResponse({
+            "success": True,
+            "message": "Task deleted successfully."
+        })
+
+    return JsonResponse({"success": False}, status=405)
 
 def task_toggle(request, pk):
     task = get_object_or_404(Task, pk=pk)
