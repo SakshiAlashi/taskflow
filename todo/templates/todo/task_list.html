@@ -2,10 +2,6 @@
 {% load static %}
 {% block content %}
 
-<div class="mb-4">
-    <h2 class="fw-bold">Dashboard</h2>
-    <p class="text-muted">Here's an overview of your tasks.</p>
-</div>
 <div class="row mb-4">
 
     <!-- Today's Focus -->
@@ -40,58 +36,49 @@
                     </div>
 
                 </div>
-                <div class="focus-content">
-                    <div class="today-task-list">
+                <div class="today-task-list">
 
-                        {% for task in today_tasks %}
+                    {% for task in today_tasks %}
 
-                            <div class="d-flex justify-content-between align-items-center py-2 border-bottom today-task-row">
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom today-task-row">
 
-                                <div class="d-flex align-items-center flex-grow-1">
+                            <div class="d-flex align-items-center flex-grow-1">
                                 
-                                    <form method="POST" action="{% url 'todo:today_task_toggle' task.pk %}">
-                                        {% csrf_token %}
-
-                                        <button
-                                            type="submit"
-                                        class="btn btn-sm p-0 me-3 border-0 bg-transparent">
+                                <form method="POST" action="{% url 'todo:today_task_toggle' task.pk %}">
+                                    {% csrf_token %}
+                                    <button
+                                        type="submit"
+                                    class="btn btn-sm p-0 me-3 border-0 bg-transparent">
                                     
-                                            {% if task.completed %}
-                                                <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                                            {% else %}
-                                                <i class="bi bi-check-circle  fs-5"></i>
-                                        {% endif %}
-
-                                        </button>
-                                    
-                                    </form>
-
-                                    <span
                                         {% if task.completed %}
-                                        class="text-decoration-line-through text-muted"
-                                        {% endif %}>
-
-                                        {{ task.title }}
-
-                                    </span>
-
-                                </div>
-
-                            <small class="text-muted today-task-time">
-                                    {{ task.created_at|time:"g:i A" }}
-                                </small>
-
+                                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                        {% else %}
+                                            <i class="bi bi-check-circle  fs-5"></i>
+                                    {% endif %}
+                                    </button>
+                                
+                                </form>
+                                <span
+                                    {% if task.completed %}
+                                    class="text-decoration-line-through text-muted"
+                                    {% endif %}>
+                                    {{ task.title }}
+                                </span>
                             </div>
-                        {% empty %}
+                        <small class="text-muted today-task-time">
+                                {{ task.created_at|time:"g:i A" }}
+                            </small>
+                        </div>
+                    {% empty %}
 
-                            <p class="text-muted mb-0">
-                                No focus tasks for today.
-                            </p>
+                        <p class="text-muted mb-0">
+                            No focus tasks for today.
+                        </p>
                         
 
-                        {% endfor %}
-                    </div>
+                    {% endfor %}
                 </div>
+            
                 <div class="today-focus-footer">
                     <hr>
                     <form method="POST" action="{% url 'todo:today_task_create' %}">
@@ -126,53 +113,87 @@
     <div class="col-lg-4 mb-3 d-flex">
 
         <div class="card shadow-sm border-0 today-progress-card">
-
             <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>                                                                  
+                        <h5 class=" progress-title mb-1">
+                            <i class="bi bi-bar-chart-line-fill text-primary me-2"></i>
+                            TODAY'S PROGRESS
+                        </h5>
+                         <small class="text-muted">
+                            Track today's productivity
+                        </small>
+                    </div>
+                    <i class="bi bi-graph-up-arrow fs-4 text-success"></i>
+                </div>
+                <div class="progress-score text-center">
 
-                <h5 class=" progress-title mb-3">
-                    <i class="bi bi-bar-chart-line-fill text-primary me-2"></i>
-                    TODAY'S PROGRESS
-                </h5>
+                    <div class="progress-percent">
+                        {{ today_progress }}%
+                    </div>
 
+                    <div class="progress-caption">
+                        Completed today
+                    </div>
+
+                </div>
                 <div class="progress-row">
                     <span>
                         <i class="bi bi-check-circle-fill text-success me-2"></i>
-                        Completed</span>
-                    <strong class="text-success">{{ today_completed }}</strong>
+                        Completed
+                    </span>
+
+                    <span class="progress-value text-success">
+                        {{ today_completed }}
+                    </span>
                 </div>
 
                 <div class="progress-row">
                     <span>
-                        <i class="bi bi-hourglass-split text-success me-2"></i>
-                        Pending</span>
-                    <strong class="text-warning">{{ today_pending }}</strong>
+                        <i class="bi bi-hourglass-split text-warning me-2"></i>
+                        Pending
+                    </span>
+
+                    <span class="progress-value text-warning">
+                        {{ today_pending }}
+                    </span>
                 </div>
 
-                <div class="progress mb-3" style="height:10px;">
+                <div class="progress progress-modern">
+                
                     <div
-                        class="progress-bar bg-success"
+                        class="progress-bar progress-fill"
                         role="progressbar"
                         style="width: {{ today_progress }}%;">
                     </div>
+
                 </div>
 
-                <h6 class="text-success mb-1">
-                    {{ progress_title }}
-                </h6>
+                <div class="progress-message">
 
-                <small class="text-muted">
-                    {{ progress_message }}
-                </small>
+                    <div class="progress-message-header">
 
+                        <span class="progress-status-title">
+                            {{ progress_title }}
+                        </span>
+
+                    </div>
+
+                    <div class="progress-status-text">
+                        {{ progress_message }}
+                    </div>
+
+                </div>
+
+                
             </div>
-
         </div>
 
     </div>
 
 </div>
 <div class="row mb-4">
-    <div class="col-md-4 mb-2">
+    <div class="col-md-3 mb-2">
         <div class="stat-tile stat-tile-total d-flex align-items-center gap-3">
             <i class="bi bi-list-task stat-icon text-primary"></i>
             <div>
@@ -181,7 +202,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-2">
+    <div class="col-md-3 mb-2">
         <div class="stat-tile stat-tile-completed d-flex align-items-center gap-3">
             <i class="bi bi-check-circle stat-icon"></i>
             <div>
@@ -190,7 +211,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-2">
+    <div class="col-md-3 mb-2">
         <div class="stat-tile stat-tile-pending d-flex align-items-center gap-3">
             <i class="bi bi-hourglass-split stat-icon"></i>
             <div>
@@ -199,15 +220,25 @@
             </div>
         </div>
     </div>
+    <div class="col-md-3 mb-2">
+        <div class="stat-tile stat-tile-overdue d-flex align-items-center gap-3">
+            <i class="bi bi-exclamation-circle stat-icon"></i>
+
+            <div>
+                <p class="stat-number">{{ overdue_count }}</p>
+                <p class="stat-label">Overdue</p>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <div class="mb-4">
     <input
         type="text"
         id="searchInput"
         class="form-control"
-        placeholder="Search tasks by title..."
-        onkeyup="filterTasks()">
+        placeholder="Search tasks by title...">
 </div>
 
 <div class="row">
@@ -219,7 +250,14 @@
             </h5>
             <div id="pendingColumn">
                 {% for task in pending_tasks %}
-                <div class="card mb-3 task-card task-card-priority-{{ task.priority }}">
+                <div
+                    class="card mb-3 task-card task-card-priority-{{ task.priority }}"
+                    data-title="{{ task.title|lower }}"
+                    data-description="{{ task.description|lower }}"
+                    data-category="{{ task.get_category_display|lower }}"
+                    data-priority="{{ task.priority|lower }}"
+                    data-overdue="{% if task.is_overdue %}overdue{% endif %}">
+                  
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-2">
                             {% if task.priority == 'high' %}
@@ -294,7 +332,13 @@
             </h5>
             <div id="completedColumn">
                 {% for task in completed_tasks %}
-                <div class="card mb-3 task-card task-card-priority-{{ task.priority }} border-success">
+                <div
+                    class="card mb-3 task-card task-card-priority-{{ task.priority }}"
+                    data-title="{{ task.title|lower }}"
+                    data-description="{{ task.description|lower }}"
+                    data-category="{{ task.get_category_display|lower }}"
+                    data-priority="{{ task.priority|lower }}">
+                   
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-2">
                             {% if task.priority == 'high' %}

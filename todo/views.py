@@ -1,14 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.urls import reverse
 from .models import Task, TodayTask
 from datetime import date
 from django.http import JsonResponse
+from django.utils import timezone
 from .forms import TaskForm , TodayTaskForm
 
 def task_list(request):
     task = Task.objects.all().order_by('-created_at')
     total_count = task.count()
+
+    overdue_count = Task.objects.filter(completed=False,due_date__lt=timezone.now().date()).count()
     completed_count = task.filter(completed=True).count()
     pending_count = total_count - completed_count
 
@@ -52,6 +53,7 @@ def task_list(request):
         'total_count': total_count,
         'completed_count':completed_count,
         'pending_count':pending_count,
+        "overdue_count": overdue_count,
 
         'form': TaskForm(),
         'today_form': TodayTaskForm(),

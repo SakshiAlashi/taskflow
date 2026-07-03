@@ -20,7 +20,6 @@ body {
 .btn-accent {
     background-color: var(--tf-accent);
     border:none;
-    border-radius:12px;
     color: #fff;
     font-size: 0.85rem;
     border-radius: 8px;
@@ -162,11 +161,11 @@ h2.fw-bold {
 
 #searchInput {
     font-size: 0.85rem;
-    border-radius: 8px;
     height:48px;
     border-radius:12px;
     padding-left:16px;
 }
+
 .task-card-priority-high {
     border-left: 4px solid #dc2626;
 }
@@ -224,15 +223,28 @@ h2.fw-bold {
 }
 
 .progress-bar{
-    border-radius:10px;
+    border-radius:12px;
 }
 .progress-row{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:6px 0;
+    padding:2px 0;
+    border-bottom:1px solid #f1f1f1;
+}
+.progress-modern{
+    height:14px;
+    border-radius:30px;
+    background:#e5e7eb;
+    overflow:hidden;
+    margin-top:8px;
 }
 
+.progress-fill{
+    background:linear-gradient(90deg,#16a34a,#22c55e);
+    border-radius:25px;
+    position:relative;
+}
 
 .focus-content{
     flex:1;
@@ -326,4 +338,89 @@ h2.fw-bold {
 /* Only the visible toast itself should receive clicks */
 .position-fixed.top-0.end-0 .toast {
     pointer-events: auto;
+}
+.stat-tile{
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+    cursor:pointer;
+    padding:18px;
+}
+
+.stat-tile:hover{
+    transform:translateY(-4px);
+    box-shadow:0 10px 20px rgba(0,0,0,.08);
+}
+
+.stat-tile-overdue{
+    background:#fdecec;
+}
+
+.stat-tile-overdue .stat-number{
+    color:#dc2626;
+}
+
+.stat-tile-overdue .stat-label{
+    color:#b91c1c;
+}
+
+.stat-number{
+    font-size:1.8rem;
+    font-weight:700;
+    line-height:1;
+    margin-bottom:4px;
+}
+.stat-icon{
+    font-size:1.5rem;
+}
+.progress-score{
+    font-size:2.5rem;
+    font-weight:600;
+    line-height:.8;
+    text-align:center;
+    margin:12px 0 16px;
+}
+.today-progress-card .text-center small{
+    display:block;
+    margin-top:4px;
+    font-size:.85rem;
+    color:#6b7280;
+}
+
+.progress-percent{
+    font-size:1.7rem;
+    font-weight:800;
+    line-height:1;
+    color:#111827;
+    margin-bottom:3px;
+}
+
+.progress-caption{
+    color:#6b7280;
+    font-size:.85rem;
+    font-weight:500;
+    margin-top:8px;
+}
+
+.progress-value{
+    font-weight:700;
+    font-size:1rem;
+}
+.progress-message{
+    margin-top:8px;
+    padding:10px 12px;
+    background:#eef7ff;
+    border:1px solid #fed7aa;
+    border-radius:16px;
+}
+.progress-status-title{
+    font-size:1.05rem;
+    font-weight:700;
+    color:#ea580c;
+}
+
+.progress-status-text{
+    font-size:.88rem;
+    color:#6b7280;
+    margin-top:2px;
 }
