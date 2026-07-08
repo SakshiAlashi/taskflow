@@ -284,7 +284,6 @@
     border-radius:12px;
     transition:all .2s ease;
     margin-bottom:8px;
-    padding:16px 18px;
 
     padding:14px 0;
 
@@ -445,7 +444,6 @@
     text-align:center;
 
     margin-top:4px;
-    font-size:11px;
     color:#6b7280;
 }
 
@@ -669,4 +667,14 @@
     color:#4f46e5;
 
     font-weight:700;
+}
+.today-task-row{
+    padding: 10px 8px;
+    border-radius: 10px;
+    transition: .2s;
+}
+
+.today-task-row:hover{
+    background:#f8fafc;
+    transform:translateX(4px);
 }

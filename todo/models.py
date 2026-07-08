@@ -32,7 +32,15 @@ class Task(models.Model):
 class TodayTask(models.Model):
     title = models.CharField(max_length=150)
     completed = models.BooleanField(default=False)
+    reviewed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return self.title
+    
+class AppState(models.Model):
+    last_focus_review = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return "Application State"

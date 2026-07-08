@@ -3,6 +3,7 @@ from .models import Task, TodayTask
 from datetime import date
 from django.http import JsonResponse
 from django.utils import timezone
+from .utils import get_today_focus_context,check_focus_review
 from .forms import TaskForm , TodayTaskForm
 
 def task_list(request):
@@ -11,39 +12,9 @@ def task_list(request):
 
     overdue_count = Task.objects.filter(completed=False,due_date__lt=timezone.now().date()).count()
     completed_count = task.filter(completed=True).count()
-    pending_count = total_count - completed_count
+    pending_count = total_count - completed_count    
 
-    today_tasks = TodayTask.objects.all().order_by('completed', 'created_at')
-    today_completed = today_tasks.filter(completed=True).count()
-    today_pending = today_tasks.count() - today_completed
-
-
-    if today_tasks.count() > 0:
-        today_progress = int((today_completed / today_tasks.count()) * 100)
-    else:
-        today_progress = 0
-
-
-    if today_progress == 100:
-        progress_title = "🎉 Fantastic!"
-        progress_message = "You've completed all focus tasks today."
-
-    elif today_progress >= 75:
-        progress_title = "🔥 Almost Done"
-        progress_message = "Just a little more to finish."
-
-    elif today_progress >= 50:
-        progress_title = "😊 Halfway There"
-        progress_message = "Keep going, you're making steady progress."
-
-    elif today_progress > 0:
-        progress_title = "💪 Great Start!"
-        progress_message = "You're off to a good beginning."
-
-    else:
-        progress_title = "🚀 Let's Get Started!"
-        progress_message = "Add or complete your first focus task."
-
+    today_focus = get_today_focus_context()
 
     context= {
         'pending_tasks':task.filter(completed=False),
@@ -60,16 +31,8 @@ def task_list(request):
 
         "show_add_button": True,
 
-        'today_tasks': today_tasks,
-        'today_completed': today_completed,
-        'today_pending': today_pending,
-        'today_progress': today_progress,
-        
-        'progress_title': progress_title,
-        'progress_message': progress_message,
-
     }
-
+    context.update(today_focus)
     return render(request, 'todo/task_list.html', context)
 
 def dashboard(request):
@@ -105,40 +68,11 @@ def dashboard(request):
             upcoming_task.due_class = "due-soon"
 
         else:
-            upcoming_task.due_text = task.due_date.strftime("%b %d")
+            upcoming_task.due_text = upcoming_task.due_date.strftime("%b %d")
             upcoming_task.due_class = "due-normal"
 
-    today_tasks = TodayTask.objects.all().order_by('completed', 'created_at')
-    today_completed = today_tasks.filter(completed=True).count()
-    today_pending = today_tasks.count() - today_completed
-
-
-    if today_tasks.count() > 0:
-        today_progress = int((today_completed / today_tasks.count()) * 100)
-    else:
-        today_progress = 0
-
-
-    if today_progress == 100:
-        progress_title = "🎉 Fantastic!"
-        progress_message = "You've completed all focus tasks today."
-
-    elif today_progress >= 75:
-        progress_title = "🔥 Almost Done"
-        progress_message = "Just a little more to finish."
-
-    elif today_progress >= 50:
-        progress_title = "😊 Halfway There"
-        progress_message = "Keep going, you're making steady progress."
-
-    elif today_progress > 0:
-        progress_title = "💪 Great Start!"
-        progress_message = "You're off to a good beginning."
-
-    else:
-        progress_title = "🚀 Let's Get Started!"
-        progress_message = "Add or complete your first focus task."
-
+    today_focus = get_today_focus_context()
+    show_focus_review = check_focus_review()
 
     context= {
         'pending_tasks':task.filter(completed=False),
@@ -156,17 +90,11 @@ def dashboard(request):
 
         "show_add_button": True,
 
-        'today_tasks': today_tasks,
-        'today_completed': today_completed,
-        'today_pending': today_pending,
-        'today_progress': today_progress,
-        
-        'progress_title': progress_title,
-        'progress_message': progress_message,
-
         'upcoming_tasks': upcoming_tasks,
         "recent_tasks": recent_tasks,
+        "show_focus_review": show_focus_review,
     }
+    context.update(today_focus)
 
     return render(request, 'todo/dashboard.html', context)
 
