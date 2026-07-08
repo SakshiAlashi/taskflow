@@ -1,0 +1,457 @@
+{% extends "todo/base.html"%}
+{% load static %}
+{% block page_title %}
+Dashboard
+{% endblock %}
+{% block content %}
+
+<div class="row mb-4">
+
+    <!-- Today's Focus -->
+    <div class="col-lg-8 mb-3 d-flex">
+
+        <div class="card shadow-sm border-0 today-focus-card">
+
+            <div class="card-body d-flex flex-column">
+
+                <div class="d-flex justify-content-between align-items-start mb-4">
+
+                    <div>
+                        <h4 class="focus-title mb-2">
+                            <i class="bi bi-stars text-warning me-2"></i>
+                            TODAY'S FOCUS
+                        </h4>
+
+                        <p class="focus-subtitle mb-0">
+                            Simple tasks for today. Check them off as you complete.
+                        </p>
+                    </div>
+
+                    <div class="focus-stats">
+
+                        <strong>{{ today_tasks.count }}</strong>
+                        <span class="mx-1">Tasks •</span>
+
+                        <span class="text-success fw-semibold">
+                            {{ today_completed }} completed
+                        </span>
+
+                    </div>
+
+                </div>
+                <div class="today-task-list">
+
+                    {% for task in today_tasks %}
+
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom today-task-row">
+
+                            <div class="d-flex align-items-center flex-grow-1">
+                                
+                                <form method="POST" action="{% url 'todo:today_task_toggle' task.pk %}">
+                                    {% csrf_token %}
+                                    <button
+                                        type="submit"
+                                    class="btn btn-sm p-0 me-3 border-0 bg-transparent">
+                                    
+                                        {% if task.completed %}
+                                            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                        {% else %}
+                                            <i class="bi bi-check-circle  fs-5"></i>
+                                    {% endif %}
+                                    </button>
+                                
+                                </form>
+                                <span
+                                    {% if task.completed %}
+                                    class="text-decoration-line-through text-muted"
+                                    {% endif %}>
+                                    {{ task.title }}
+                                </span>
+                            </div>
+                        <small class="text-muted today-task-time">
+                                {{ task.created_at|time:"g:i A" }}
+                            </small>
+                        </div>
+                    {% empty %}
+
+                        <p class="text-muted mb-0">
+                            No focus tasks for today.
+                        </p>
+                        
+
+                    {% endfor %}
+                </div>
+            
+                <div class="today-focus-footer">
+                    <hr>
+                    <form method="POST" action="{% url 'todo:today_task_create' %}">
+                        {% csrf_token %}
+
+                        <div class="row g-2 align-items-center">
+
+                            <div class="col">
+                                {{ today_form.title }}
+                            </div>
+                                
+                            <div class="col-auto">
+                                <button
+                                    type="submit"
+                                    class="btn btn-accent px-4">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Progress -->
+    <div class="col-lg-4 mb-3 d-flex">
+
+        <div class="card shadow-sm border-0 today-progress-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>                                                                  
+                        <h5 id="progressHeading" class="progress-title mb-1">
+                            <i id="progressHeadingIcon" class="bi bi-bar-chart-line-fill text-primary me-2"></i>
+                            TODAY'S PROGRESS
+                        </h5>
+                         <small id="progressSubtitle" class="text-muted">
+                            Track today's productivity
+                        </small>
+                    </div>
+                    <button
+                        id="progressToggle"
+                        class="progress-toggle"
+                        data-mode="today">
+
+                        <i class="bi bi-calendar3"></i>
+                        <span>Today</span>
+
+                    </button>
+                </div>
+                <div class="progress-content">
+
+                    <!-- Circular Progress -->
+                    <div class="progress-score">
+
+                        <div class="progress-circle" id="progressCircle" style="--progress: {{ today_progress }}%; --progress-color:#4f46e5;">
+                    
+                            <div class="progress-circle-inner">
+                                <div id="progressPercent" class="progress-percent">
+                                    {{ today_progress }}%
+                                </div>
+                            
+                                <div id="progressCaption" class="progress-caption">
+                                    Completed today
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="progress-stats">
+                    
+                        <div class="progress-row">
+                            <span>
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Completed
+                            </span>
+                        
+                            <span id="completedValue" class="progress-value text-success">
+                                {{ today_completed }}
+                            </span>
+                        </div>
+
+                        <div class="progress-row">
+                            <span>
+                                <i class="bi bi-hourglass-split text-warning me-2"></i>
+                                Pending
+                            </span>
+                        
+                            <span id="pendingValue" class="progress-value text-warning">
+                                {{ today_pending }}
+                            </span>
+                        </div>
+
+                        <div class="progress-row">
+                            <span>
+                                <i class="bi bi-list-task text-secondary me-2"></i>
+                                Total Tasks
+                            </span>
+                        
+                            <span  id="totalValue" class="progress-value">
+                                {{ today_tasks.count }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="progress-message">
+
+                    <div class="progress-message-header">
+
+                        <span id="progressTitle" class="progress-status-title">
+                            {{ progress_title }}
+                        </span>
+
+                    </div>
+
+                    <div id="progressMessage" class="progress-status-text">
+                        {{ progress_message }}
+                    </div>
+
+                </div>
+                <div id="progressData"
+
+                    data-today-progress="{{ today_progress }}"
+                    data-today-completed="{{ today_completed }}"
+                    data-today-pending="{{ today_pending }}"
+                    data-today-total="{{ today_tasks.count }}"
+                    data-today-title="{{ progress_title }}"
+                    data-today-message="{{ progress_message }}"
+
+                    data-overall-progress="{{ overall_progress }}"
+                    data-overall-completed="{{ completed_count }}"
+                    data-overall-pending="{{ pending_count }}"
+                    data-overall-total="{{ total_count }}">
+
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div class="row mb-4">
+    <div class="col-md-3 mb-2">
+        <div class="stat-tile stat-tile-total d-flex align-items-center gap-3">
+            <i class="bi bi-list-task stat-icon text-primary"></i>
+            <div>
+                <p class="stat-number">{{ total_count }}</p>
+                <p class="stat-label">Total Tasks</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-2">
+        <div class="stat-tile stat-tile-completed d-flex align-items-center gap-3">
+            <i class="bi bi-check-circle stat-icon"></i>
+            <div>
+                <p class="stat-number">{{ completed_count }}</p>
+                <p class="stat-label">Completed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-2">
+        <div class="stat-tile stat-tile-pending d-flex align-items-center gap-3">
+            <i class="bi bi-hourglass-split stat-icon"></i>
+            <div>
+                <p class="stat-number">{{ pending_count }}</p>
+                <p class="stat-label">Pending</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-2">
+        <div class="stat-tile stat-tile-overdue d-flex align-items-center gap-3">
+            <i class="bi bi-exclamation-circle stat-icon"></i>
+
+            <div>
+                <p class="stat-number">{{ overdue_count }}</p>
+                <p class="stat-label">Overdue</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm rounded-4 ">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-header">
+                    <div>
+                        <h4>
+                            <i class="bi bi-calendar-event me-2 text-primary"></i>
+                            Upcoming Deadlines
+                        </h4>
+
+                        <small>Tasks due soon</small>
+                    </div>
+
+                    <span class="dashboard-count">
+                        {{ upcoming_tasks|length }}
+                    </span>
+                </div>
+
+                {% if upcoming_tasks %}
+
+                    {% for task in upcoming_tasks %}
+
+                        <div class="deadline-item  
+                            {% if task.priority == 'high' %}
+                                priority-high-item
+                            {% elif task.priority == 'medium' %}
+                                priority-medium-item
+                            {% else %}
+                                priority-low-item
+                            {% endif %}">
+
+                            <div class="deadline-left">
+
+                                <h6>{{ task.title }}</h6>
+                                <div class="task-meta">
+
+                                    <small>
+                                        <i class="bi bi-calendar3"></i>
+                                        Due {{ task.due_date|date:"M d, Y" }}
+                                        <span class="{{ task.due_class }}">
+                                            {{ task.due_text }}
+                                        </span>
+                                    </small>
+                                    <span class="category-badge">
+                                        <i class="bi bi-folder2-open"></i>
+                                        {{ task.get_category_display }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <span class="priority-badge priority-{{ task.priority|lower }}">
+                                {{ task.priority }}
+                            </span>
+
+                        </div>
+
+                        {% endfor %}
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+                        No upcoming deadlines 🎉
+                    </p>
+
+                {% endif %}
+
+            </div>
+            <div class="dashboard-footer">
+                <a href="{% url 'todo:task_list' %}" class="dashboard-link">
+                    View all deadlines
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm rounded-4 h-100">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-header">
+                    <div>
+                        <h4>
+                            <i class="bi bi-clock-history me-2 text-primary"></i>
+                            Recent Tasks
+                        </h4>
+
+                        <small>Latest created tasks</small>
+                    </div>
+
+                    <span class="dashboard-count">
+                        {{ recent_tasks|length }}
+                    </span>
+                </div>
+
+                {% if upcoming_tasks %}
+
+                    <div class="deadline-list">
+                    
+                        {% for task in recent_tasks %}
+
+                            <div class="deadline-item">
+                            
+                                <div class="deadline-left">
+
+                                    <h6>{{ task.title }}</h6>
+                                    <div class="task-meta">
+
+                                        <small class="task-meta">
+
+                                            <i class="bi bi-calendar3"></i>
+
+                                            {% if task.days_left == 0 %}
+                                                <span class="urgency today">Today</span>
+
+                                            {% elif task.days_left == 1 %}
+                                                <span class="urgency tomorrow">Tomorrow</span>
+
+                                            {% elif task.days_left <= 7 %}
+                                                <span class="urgency soon">
+                                                    In {{ task.days_left }} days
+                                                </span>
+
+                                            {% else %}
+                                                <i class="bi bi-clock-history"></i>
+                                                    Created {{ task.created_at|date:"M d" }}
+
+                                            {% endif %}
+
+                                        </small>
+                                        <span class="category-badge">
+                                            <i class="bi bi-folder2-open"></i>
+                                            {{ task.get_category_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            
+                                <span class="priority-badge priority-{{ task.priority|lower }}">
+                                    {{ task.priority }}
+                                </span>
+                                
+
+                            </div>
+
+                            {% endfor %}
+                        
+                    </div>
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+                        No upcoming deadlines 🎉
+                    </p>
+
+                {% endif %}
+
+            </div>
+            <div class="dashboard-footer">
+                <a href="{% url 'todo:task_list' %}" class="dashboard-link">
+                    View all deadlines
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+       
+    </div>
+</div>
+
+
+{% include "todo/modals.html" %}
+
+<script src="{% static 'todo/js/task_search.js' %}"></script>
+{% endblock %}

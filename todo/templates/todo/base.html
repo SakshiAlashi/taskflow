@@ -12,27 +12,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'todo/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'todo/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'todo/css/task_list.css' %}">
 </head>
-<body>
+<body>    
     <div class="dashboard-layout">
 
         <!-- Sidebar -->
         <aside class="sidebar">
 
             <div class="sidebar-logo">
-                <a href="{% url 'todo:task_list' %}" class="logo-link">
+                <a href="{% url 'todo:dashboard' %}" class="logo-link">
                     TaskFlow
                 </a>
             </div>
 
             <nav class="sidebar-menu">
 
-                <a href="#" class="active">
+                <a href="{% url 'todo:dashboard' %}"
+                class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
 
-                <a href="#">
+                <a href="{% url 'todo:task_list' %}"
+                class="{% if request.resolver_match.url_name == 'task_list' %}active{% endif %}">
                     <i class="bi bi-list-task"></i>
                     <span>My Tasks</span>
                 </a>
@@ -141,5 +144,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'todo/js/task_modal.js' %}"></script>  
+<script src="{% static 'todo/js/task_filters.js' %}"></script>
+<script src="{% static 'todo/js/progress_toggle.js' %}"></script>
+
 </body>
 </html>

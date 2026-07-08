@@ -1,0 +1,220 @@
+/* ==========================
+   PAGE HEADER
+========================== */
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+}
+
+.page-heading{
+    margin:0;
+    font-size:2rem;
+    font-weight:700;
+    color:#111827;
+}
+
+.page-subtitle{
+    margin-top:6px;
+    color:#6b7280;
+    font-size:.95rem;
+}
+/* Toolbar */
+
+.task-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:28px 0 30px;
+}
+
+.toolbar-left,
+.toolbar-right{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+.filter-btn{
+    height:42px;
+    padding:0 18px;
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    border:1px solid #E5E7EB;
+    border-radius:12px;
+
+    background:#fff;
+
+    font-weight:500;
+    color:#111827;
+}
+.toolbar-select{
+
+    height:42px;
+    min-width:150px;
+
+    border:1px solid #E5E7EB;
+    border-radius:12px;
+
+    background:#fff;
+
+    padding:0 14px;
+
+    font-size:.9rem;
+    color:#374151;
+
+    transition:.2s;
+}
+
+.toolbar-select:hover{
+    border-color:#C7D2FE;
+}
+
+.toolbar-select:focus{
+
+    outline:none;
+
+    border-color:#4F46E5;
+    box-shadow:0 0 0 4px rgba(79,70,229,.08);
+
+}s
+
+.sort-label{
+    color:#6B7280;
+    font-size:.9rem;
+}
+
+.sort-select{
+    border:none;
+    background:transparent;
+    font-weight:600;
+    outline:none;
+    cursor:pointer;
+}
+
+.view-btn{
+    width:42px;
+    height:42px;
+
+    border:none;
+    border-radius:12px;
+
+    background:#fff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    transition:.2s;
+}
+
+.view-btn.active{
+    background:#5B4CF0;
+    color:#fff;
+}
+/* ---------- Task Tabs ---------- */
+
+.task-tabs{
+    display:flex;
+    gap:12px;
+    margin:25px 0;
+}
+
+.task-tab{
+    border:none;
+    background:#F3F4F6;
+    color:#6B7280;
+    padding:8px 18px;
+    border-radius:10px;
+    font-size:.9rem;
+    font-weight:500;
+    transition:.25s;
+}
+
+.task-tab:hover{
+    background:#E9E8FF;
+    color:#5B4CF0;
+}
+
+.task-tab.active{
+    background:#5B4CF0;
+    color:#fff;
+}
+.task-filter-dropdown{
+    width:260px;
+    border:none;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.filter-label{
+    display:block;
+    font-size:.8rem;
+    font-weight:700;
+    color:#6b7280;
+    text-transform:uppercase;
+    margin-bottom:8px;
+    letter-spacing:.6px;
+}
+
+.task-filter-dropdown .form-select{
+    border-radius:12px;
+    height:44px;
+}
+/* ==========================
+   TASK CARD
+========================== */
+
+.task-card{
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+    overflow: hidden;
+}
+
+.task-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+/* ==========================
+   Priority Badges
+========================== */
+
+.priority-badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:8px;
+    font-size:.72rem;
+    font-weight:600;
+}
+
+.priority-high{
+    background:#FCEBEB;
+    color:#A32D2D;
+}
+
+.priority-medium{
+    background:#FDF3E0;
+    color:#854F0B;
+}
+
+.priority-low{
+    background:#F1F0EE;
+    color:#5F5E5A;
+}
+.category-badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:8px;
+    background:#ffffff;
+    border:1px solid #E5E7EB;
+    color:#6B7280;
+    font-size:.72rem;
+    font-weight:600;
+}
