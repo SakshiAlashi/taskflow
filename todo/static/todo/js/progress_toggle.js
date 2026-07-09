@@ -72,13 +72,13 @@ function showToday(){
     title.textContent = data.dataset.todayTitle;
     message.textContent = data.dataset.todayMessage;
 
-    heading.textContent = "OVERALL PROGRESS";
+    heading.textContent = "TODAY'S PROGRESS";
 
     headingIcon.className =
         "bi bi-bar-chart-fill text-success me-2";
 
     subtitle.textContent =
-        "Your complete task library";
+        "Track today's productivity";
 
     circle.style.setProperty("--progress-color", "#4f46e5");
 
@@ -86,8 +86,8 @@ function showToday(){
     toggle.classList.add("today-mode");
 
     toggle.dataset.mode = "today";
-    toggle.querySelector("span").textContent = "Today";
-    toggle.querySelector("i").className = "bi bi-calendar3";
+    toggle.querySelector("span").textContent = "Overall";
+    toggle.querySelector("i").className = "bi bi-bar-chart";
 }
 
 function showOverall(){
@@ -112,13 +112,13 @@ function showOverall(){
     title.textContent = msg.title;
     message.textContent = msg.message;
 
-    heading.textContent = "TODAY'S PROGRESS";
+    heading.textContent = "OVERALL PROGRESS";
 
     headingIcon.className =
         "bi bi-calendar-check-fill text-primary me-2";
 
     subtitle.textContent =
-        "Track today's productivity";
+        "Your complete task library";
 
     circle.style.setProperty("--progress-color", "#16a34a");
 
@@ -126,8 +126,8 @@ function showOverall(){
     toggle.classList.add("overall-mode");
 
     toggle.dataset.mode = "overall";
-    toggle.querySelector("span").textContent = "Overall";
-    toggle.querySelector("i").className = "bi bi-bar-chart";
+    toggle.querySelector("span").textContent = "Today";
+    toggle.querySelector("i").className = "bi bi-calendar3";
 }
 
 toggle.addEventListener("click", function(){
@@ -140,4 +140,4 @@ toggle.addEventListener("click", function(){
     }
 
 });
-toggle.classList.add("today-mode");
+showToday();

@@ -19,4 +19,7 @@ urlpatterns = [
     # Today's Focus
     path("today/add/", views.today_task_create, name="today_task_create"),
     path("today/toggle/<int:pk>/", views.today_task_toggle, name="today_task_toggle"),
+
+    path("today/review/keep/",views.keep_today_focus,name="keep_today_focus"),
+    path("today/review/", views.focus_review, name="focus_review"),
 ]

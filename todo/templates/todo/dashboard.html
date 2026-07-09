@@ -1,8 +1,10 @@
 {% extends "todo/base.html"%}
 {% load static %}
+
 {% block page_title %}
 Dashboard
 {% endblock %}
+
 {% block content %}
 <div class="row mb-4">
 
@@ -29,7 +31,7 @@ Dashboard
                     <div class="focus-stats">
 
                         <span class="badge bg-light text-dark me-2">
-                            {{ today_tasks.count }} Tasks
+                            {{ today_total }} Tasks
                         </span>
 
                         <span class="badge bg-success-subtle text-success">
@@ -449,6 +451,15 @@ Dashboard
     </div>
 </div>
 
+{% if show_focus_review %}
+<script>
+    window.showFocusReview = true;
+</script>
+{% else %}
+<script>
+    window.showFocusReview = false;
+</script>
+{% endif %}
 
 {% include "todo/modals.html" %}
 

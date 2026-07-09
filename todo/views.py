@@ -1,10 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Task, TodayTask
+from .models import Task, TodayTask,AppState
 from datetime import date
 from django.http import JsonResponse
 from django.utils import timezone
 from .utils import get_today_focus_context,check_focus_review
 from .forms import TaskForm , TodayTaskForm
+
+def keep_today_focus(request):
+
+    if request.method == "POST":
+
+        TodayTask.objects.filter(
+            completed=False,
+            reviewed=False
+        ).update(reviewed=True)
+
+        state, _ = AppState.objects.get_or_create(pk=1)
+        state.last_focus_review = timezone.now().date()
+        state.save()
+
+    return redirect("todo:dashboard")
 
 def task_list(request):
     task = Task.objects.all().order_by('-created_at')
@@ -73,6 +88,7 @@ def dashboard(request):
 
     today_focus = get_today_focus_context()
     show_focus_review = check_focus_review()
+    review_tasks = TodayTask.objects.filter(completed=False,reviewed=False)
 
     context= {
         'pending_tasks':task.filter(completed=False),
@@ -93,6 +109,7 @@ def dashboard(request):
         'upcoming_tasks': upcoming_tasks,
         "recent_tasks": recent_tasks,
         "show_focus_review": show_focus_review,
+        "review_tasks": review_tasks,
     }
     context.update(today_focus)
 
@@ -121,7 +138,7 @@ def today_task_create(request):
         if form.is_valid():
             form.save()
 
-    return redirect("todo:task_list")
+    return redirect("todo:dashboard")
 
 def task_update(request, pk):
     task = get_object_or_404(Task, pk=pk)
@@ -165,5 +182,26 @@ def today_task_toggle(request, pk):
     if request.method=="POST":
         today_task.completed = not today_task.completed
         today_task.save()
+
+    return redirect("todo:dashboard")
+
+def focus_review(request):
+
+    if request.method == "POST":
+
+        selected_ids = request.POST.getlist("selected_tasks")
+
+        # Remove every unfinished task that was NOT selected
+        TodayTask.objects.filter(completed=False,reviewed=False).exclude(id__in=selected_ids).delete()
+
+        # Mark the selected tasks as reviewed
+        TodayTask.objects.filter(id__in=selected_ids).update(reviewed=True)
+
+        # Remove all completed tasks from yesterday
+        TodayTask.objects.filter(completed=True).delete()
+        
+        state, _ = AppState.objects.get_or_create(pk=1)
+        state.last_focus_review = timezone.now().date()
+        state.save()
 
     return redirect("todo:dashboard")

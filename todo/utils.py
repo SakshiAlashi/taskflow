@@ -3,13 +3,18 @@ from .models import TodayTask,AppState
 
 def get_today_focus_context():
 
-    today_tasks = TodayTask.objects.all().order_by("completed", "created_at")
+    today_tasks = TodayTask.objects.all().order_by("created_at")
+
+    unfinished_focus_tasks = today_tasks
 
     today_completed = today_tasks.filter(completed=True).count()
-    today_pending = today_tasks.count() - today_completed
 
-    if today_tasks.count() > 0:
-        today_progress = int((today_completed / today_tasks.count()) * 100)
+    today_pending = today_tasks.filter(completed=False).count()
+
+    today_total = today_tasks.count()
+
+    if today_total > 0:
+        today_progress = int((today_completed / today_total) * 100)
     else:
         today_progress = 0
 
@@ -40,6 +45,8 @@ def get_today_focus_context():
         "today_progress": today_progress,
         "progress_title": progress_title,
         "progress_message": progress_message,
+        "unfinished_focus_tasks": unfinished_focus_tasks,
+        "today_total": today_total,
     }
 
 
@@ -49,9 +56,9 @@ def check_focus_review():
 
     today = timezone.now().date()
 
+    # New day started
     if state.last_focus_review == today:
         return False
-
     unfinished = TodayTask.objects.filter(
         completed=False,
         reviewed=False

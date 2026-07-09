@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Task, TodayTask
+from .models import Task, TodayTask,AppState
 
 # Register your models here.
 @admin.register(Task)
@@ -15,3 +15,7 @@ class TodayTaskAdmin(admin.ModelAdmin):
     list_filter = ('completed', 'created_at')
     search_fields = ('title',)
     ordering = ('-created_at',)
+
+@admin.register(AppState)
+class AppStateAdmin(admin.ModelAdmin):
+    list_display = ("id", "last_focus_review")
