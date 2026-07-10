@@ -1,0 +1,218 @@
+{% extends "todo/base.html" %}
+{% load task_extras %}
+{% block page_title %}
+📅 Calendar
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+     <div>
+        <p class="text-muted mb-0">
+           📅   Plan your schedule and upcoming deadlines.
+        </p>
+
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+
+        <button class="btn btn-light shadow-sm">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <h4 class="mb-0 fw-semibold px-3">
+            {{ month_name }} {{ year }}
+        </h4>
+
+        <button class="btn btn-light shadow-sm">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+
+        <button class="btn btn-primary ms-2">
+            Today
+        </button>
+
+    </div>
+
+</div>
+
+<div class="calendar-layout">
+
+    <div class="calendar-main"> 
+         
+        <table class="table calendar-table text-center align-middle">
+
+            <thead>
+                <tr>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                    <th>Sun</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for week in calendar %}
+                <tr>
+
+                    {% for day in week %}
+
+                        <td
+                            class="calendar-day {% if day != 0 and day == today.day %}today{% endif %}"
+                            {% if day != 0 %}
+                                data-day="{{ day }}"
+                            {% endif %}>
+
+                            {% if day != 0 %}
+
+                                <div class="day-number">
+                                    {{ day }}
+                                </div>
+
+                                <div class="calendar-task-list">
+
+                                    {% for task in task_map|get_item:day %}
+                                
+                                        <div class="calendar-task-chip">
+                                            {{ task.title }}
+                                        </div>
+                                    
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+                    {% endfor %}
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+        </div>
+
+        <aside id="calendarSidePanel" class="calendar-side-panel">
+            <button
+                id="closeCalendarPanel"
+                class="btn-close float-end">
+            </button>
+            <h4 id="selectedDate">
+                Select a day
+            </h4>
+
+            <p id="selectedTaskCount">
+                Click a date to view tasks.
+            </p>
+
+            <div id="calendarTaskContainer">
+
+            </div>
+
+        </aside>
+
+    </div>
+</div>
+<script>
+const calendarTasks = JSON.parse('{{ task_json|escapejs }}');
+const monthName = "{{ month_name }}";
+const year = "{{ year }}";
+const layout = document.querySelector(".calendar-layout");
+
+document.querySelectorAll(".calendar-day").forEach(day => {
+
+    day.addEventListener("click", function(){
+
+        const dayNumber = this.dataset.day;
+
+        if(!dayNumber) return;
+        
+        document.querySelectorAll(".calendar-day").forEach(cell=>{
+            cell.classList.remove("selected");
+        });
+
+        this.classList.add("selected");
+
+        layout.classList.add("panel-open");
+
+        document.getElementById("selectedDate").innerText =
+            `${dayNumber} ${monthName} ${year}`;
+        
+        const tasks = calendarTasks[dayNumber] || [];
+
+        document.getElementById("selectedTaskCount").innerText =
+            `${tasks.length} task${tasks.length !== 1 ? "s" : ""}`;
+
+        const container =
+            document.getElementById("calendarTaskContainer");
+
+        container.innerHTML = "";
+
+        if(tasks.length === 0){
+
+            container.innerHTML = `
+                <p class="text-muted">
+                    No tasks scheduled.
+                </p>
+            `;
+
+        }
+        else{
+
+            let html = "";
+
+            tasks.forEach(task => {
+
+                html += `
+                    <div class="calendar-panel-task">
+            
+                        <div class="task-title">
+                            ${task.title}
+                        </div>
+            
+                        <div class="task-meta">
+            
+                            <span class="priority ${task.priority}">
+                                ${task.priority}
+                            </span>
+            
+                            ${
+                                task.completed
+                                ? '<span class="completed">Completed</span>'
+                                : '<span class="pending">Pending</span>'
+                            }
+            
+                        </div>
+            
+                    </div>
+                `;
+
+            });
+
+            container.innerHTML = html;
+            
+        }
+
+    });
+
+});
+
+document.getElementById("closeCalendarPanel").addEventListener("click", function () {
+
+    layout.classList.remove("panel-open");
+
+    document.querySelectorAll(".calendar-day").forEach(cell => {
+        cell.classList.remove("selected");
+    });
+
+});
+console.log(calendarTasks);
+</script>
+
+{% endblock %}

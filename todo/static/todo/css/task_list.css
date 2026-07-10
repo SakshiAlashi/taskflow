@@ -151,7 +151,20 @@
     padding:18px;
     box-shadow:0 12px 30px rgba(0,0,0,.12);
 }
+.active-stat{
+    position: relative;
+}
 
+.active-stat::after{
+    content:"";
+    position:absolute;
+    left:15px;
+    right:15px;
+    bottom:0;
+    height:4px;
+    border-radius:20px;
+    background:#6d5dfc;
+}
 .filter-label{
     display:block;
     font-size:.8rem;

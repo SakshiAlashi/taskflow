@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Task, TodayTask,AppState
-from datetime import date
 from django.http import JsonResponse
 from django.utils import timezone
+import calendar
+import json
+from datetime import datetime
 from .utils import get_today_focus_context,check_focus_review
 from .forms import TaskForm , TodayTaskForm
 
@@ -22,15 +24,26 @@ def keep_today_focus(request):
     return redirect("todo:dashboard")
 
 def task_list(request):
-    task = Task.objects.all().order_by('-created_at')
-    total_count = task.count()
+    all_tasks = Task.objects.all().order_by("-created_at")
+    task = all_tasks
+    status = request.GET.get("status", "all")
 
-    overdue_count = Task.objects.filter(completed=False,due_date__lt=timezone.now().date()).count()
-    completed_count = task.filter(completed=True).count()
+    if status == "pending":
+        task = task.filter(completed=False)
+
+    elif status == "completed":
+        task = task.filter(completed=True)
+
+    elif status == "overdue":
+        task = task.filter(completed=False,due_date__lt=timezone.now().date())
+
+    total_count = all_tasks.count()
+    overdue_count = all_tasks.filter(completed=False,due_date__lt=timezone.now().date()).count()
+    completed_count = all_tasks.filter(completed=True).count()
     pending_count = total_count - completed_count    
 
     today_focus = get_today_focus_context()
-
+    
     context= {
         'pending_tasks':task.filter(completed=False),
         'completed_tasks':task.filter(completed=True),
@@ -45,7 +58,7 @@ def task_list(request):
         'today_form': TodayTaskForm(),
 
         "show_add_button": True,
-
+        "current_status": status,
     }
     context.update(today_focus)
     return render(request, 'todo/task_list.html', context)
@@ -89,6 +102,7 @@ def dashboard(request):
     today_focus = get_today_focus_context()
     show_focus_review = check_focus_review()
     review_tasks = TodayTask.objects.filter(completed=False,reviewed=False)
+    print(recent_tasks)
 
     context= {
         'pending_tasks':task.filter(completed=False),
@@ -205,3 +219,54 @@ def focus_review(request):
         state.save()
 
     return redirect("todo:dashboard")
+from django.utils import timezone
+import calendar
+
+
+def calendar_view(request):
+
+    today = timezone.localdate()
+
+    year = today.year
+    month = today.month
+    tasks = Task.objects.filter(due_date__year=year,due_date__month=month)
+
+    tasks_by_day = {}
+
+    for task in tasks:
+        day = task.due_date.day
+
+        if day not in tasks_by_day:
+            tasks_by_day[day] = []
+
+        tasks_by_day[day].append(task)
+    
+    cal = calendar.monthcalendar(year, month)
+    task_json = {}
+
+    for day, tasks in tasks_by_day.items():
+        task_json[day] = [
+            {
+                "title": task.title,
+                "priority": task.priority,
+                "completed": task.completed,
+            }
+            for task in tasks
+        ]
+
+    context = {
+        "calendar": cal,
+        "month_name": calendar.month_name[month],
+        "year": year,
+
+        "today_day": today.day,
+        "current_month": today.month,
+        "current_year": today.year,
+        
+        "tasks": tasks,
+        "task_map": tasks_by_day,
+        "today": today,
+        "task_json": json.dumps(task_json),
+    }
+
+    return render(request, "todo/calendar.html", context)

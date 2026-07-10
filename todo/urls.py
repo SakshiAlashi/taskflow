@@ -22,4 +22,6 @@ urlpatterns = [
 
     path("today/review/keep/",views.keep_today_focus,name="keep_today_focus"),
     path("today/review/", views.focus_review, name="focus_review"),
+
+    path("calendar/", views.calendar_view, name="calendar"),
 ]

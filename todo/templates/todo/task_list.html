@@ -13,8 +13,57 @@ My Tasks
         </p>
 </div>
 <!-- ================= Task Toolbar ================= -->
-
-<div class="task-tabs">
+<div class="row mb-4">
+    <div class="col-md-3 mb-2">
+        <a href="?status=all" class="text-decoration-none">
+            <div class="stat-tile stat-tile-total d-flex align-items-center gap-3
+            {% if current_status == 'all' %}active-stat{% endif %}">
+                <i class="bi bi-list-task stat-icon text-primary"></i>
+                <div>
+                    <p class="stat-number">{{ total_count }}</p>
+                    <p class="stat-label">Total Tasks</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-2">
+        <a href="?status=completed" class="text-decoration-none">
+            <div class="stat-tile stat-tile-completed d-flex align-items-center gap-3
+            {% if current_status == 'completed' %}active-stat{% endif %}">
+                <i class="bi bi-check-circle stat-icon"></i>
+                <div>
+                    <p class="stat-number">{{ completed_count }}</p>
+                    <p class="stat-label">Completed</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-2">
+        <a href="?status=pending" class="text-decoration-none">
+            <div class="stat-tile stat-tile-pending d-flex align-items-center gap-3
+            {% if current_status == 'pending' %}active-stat{% endif %}">
+                <i class="bi bi-hourglass-split stat-icon"></i>
+                <div>
+                    <p class="stat-number">{{ pending_count }}</p>
+                    <p class="stat-label">Pending</p>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3 mb-2">
+        <a href="?status=overdue" class="text-decoration-none">
+            <div class="stat-tile stat-tile-overdue d-flex align-items-center gap-3
+            {% if current_status == 'overdue' %}active-stat{% endif %}">
+                <i class="bi bi-exclamation-circle stat-icon"></i>
+                <div>
+                    <p class="stat-number">{{ overdue_count }}</p>
+                    <p class="stat-label">Overdue</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+<div class="task-tabs d-none">
 
     <button class="task-tab active">
         All

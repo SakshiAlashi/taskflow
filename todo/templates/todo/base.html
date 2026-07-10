@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="{% static 'todo/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'todo/css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'todo/css/task_list.css' %}">
+    <link rel="stylesheet" href="{% static 'todo/css/calendar.css' %}">
+
 </head>
 <body>    
     <div class="dashboard-layout">
@@ -40,7 +42,7 @@
                     <span>My Tasks</span>
                 </a>
 
-                <a href="#">
+                <a href="{% url 'todo:calendar' %}">
                     <i class="bi bi-calendar3"></i>
                     <span>Calendar</span>
                 </a>
