@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from django.utils import timezone
 import calendar
 import json
-from datetime import datetime
 from .utils import get_today_focus_context,check_focus_review
 from .forms import TaskForm , TodayTaskForm
 
@@ -131,15 +130,26 @@ def dashboard(request):
 
 
 def task_create(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = TaskForm(request.POST)
+
         if form.is_valid():
-            form.save()
+
+            task = form.save(commit=False)
+
+            if task.due_date < timezone.localdate():
+                return JsonResponse({
+                    "success": False,
+                    "message": "Tasks cannot be created for past dates."
+                }, status=400)
+
+            task.save()
+
             return JsonResponse({
                 "success": True,
                 "message": "Task created successfully."
             })
-        
+
         return JsonResponse({
             "success": False,
             "errors": form.errors
@@ -219,16 +229,28 @@ def focus_review(request):
         state.save()
 
     return redirect("todo:dashboard")
-from django.utils import timezone
-import calendar
 
-
-def calendar_view(request):
+def calendar_view(request): 
 
     today = timezone.localdate()
 
-    year = today.year
-    month = today.month
+    year = int(request.GET.get("year", today.year))
+    month = int(request.GET.get("month", today.month))
+
+    if month == 1:
+        prev_month = 12
+        prev_year = year - 1
+    else:
+        prev_month = month - 1
+        prev_year = year
+
+    if month == 12: 
+        next_month = 1
+        next_year = year + 1
+    else:
+        next_month = month + 1
+        next_year = year
+
     tasks = Task.objects.filter(due_date__year=year,due_date__month=month)
 
     tasks_by_day = {}
@@ -257,6 +279,7 @@ def calendar_view(request):
     context = {
         "calendar": cal,
         "month_name": calendar.month_name[month],
+        "month": month,
         "year": year,
 
         "today_day": today.day,
@@ -267,6 +290,16 @@ def calendar_view(request):
         "task_map": tasks_by_day,
         "today": today,
         "task_json": json.dumps(task_json),
+
+        "prev_month": prev_month,
+        "prev_year": prev_year,
+
+        "next_month": next_month,
+        "next_year": next_year,
+        "is_current_month": (
+             month == today.month and year == today.year
+        ),
+        "form": TaskForm(),
     }
 
     return render(request, "todo/calendar.html", context)

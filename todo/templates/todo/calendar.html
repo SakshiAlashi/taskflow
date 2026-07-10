@@ -15,21 +15,32 @@
 
     <div class="d-flex align-items-center gap-2">
 
-        <button class="btn btn-light shadow-sm">
+        <a
+            href="?year={{ prev_year }}&month={{ prev_month }}"
+            class="btn btn-light shadow-sm">
+
             <i class="bi bi-chevron-left"></i>
-        </button>
+
+        </a>
 
         <h4 class="mb-0 fw-semibold px-3">
             {{ month_name }} {{ year }}
         </h4>
 
-        <button class="btn btn-light shadow-sm">
-            <i class="bi bi-chevron-right"></i>
-        </button>
+        <a
+            href="?year={{ next_year }}&month={{ next_month }}"
+            class="btn btn-light shadow-sm">
 
-        <button class="btn btn-primary ms-2">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+
+        <a
+            href="?year={{ current_year }}&month={{ current_month }}"
+            class="btn btn-primary ms-2">
+
             Today
-        </button>
+
+        </a>
 
     </div>
 
@@ -61,11 +72,14 @@
                     {% for day in week %}
 
                         <td
-                            class="calendar-day {% if day != 0 and day == today.day %}today{% endif %}"
+                            class="calendar-day
+                            {% if is_current_month and day != 0 and day == today.day %}
+                            today
+                            {% endif %}"
                             {% if day != 0 %}
                                 data-day="{{ day }}"
-                            {% endif %}>
-
+                            {% endif %}
+                        >
                             {% if day != 0 %}
 
                                 <div class="day-number">
@@ -110,6 +124,24 @@
             <p id="selectedTaskCount">
                 Click a date to view tasks.
             </p>
+            <button
+                id="addTaskForDate"
+                class="btn btn-primary w-100 mb-2"
+                data-bs-toggle="modal"
+                data-bs-target="#addTaskModal">
+
+                <i class="bi bi-plus-lg"></i>
+                Add Task
+
+            </button>
+
+            <p
+                id="pastDateMessage"
+                class="text-muted small text-center d-none">
+
+                🔒 You can't add tasks to past dates.
+
+            </p>
 
             <div id="calendarTaskContainer">
 
@@ -119,11 +151,16 @@
 
     </div>
 </div>
+
 <script>
 const calendarTasks = JSON.parse('{{ task_json|escapejs }}');
 const monthName = "{{ month_name }}";
 const year = "{{ year }}";
+const today = new Date();
+today.setHours(0,0,0,0);
+
 const layout = document.querySelector(".calendar-layout");
+let selectedDay = null;
 
 document.querySelectorAll(".calendar-day").forEach(day => {
 
@@ -132,6 +169,30 @@ document.querySelectorAll(".calendar-day").forEach(day => {
         const dayNumber = this.dataset.day;
 
         if(!dayNumber) return;
+        selectedDay = dayNumber;
+
+        const selectedDate = new Date(
+            Number(year),
+            Number("{{ month }}") - 1,
+            Number(dayNumber)
+        );
+
+        selectedDate.setHours(0,0,0,0);
+
+        const addButton = document.getElementById("addTaskForDate");
+        const message = document.getElementById("pastDateMessage");
+
+        if (selectedDate < today) {
+
+            addButton.disabled = true;
+            message.classList.remove("d-none");
+
+        } else {
+
+            addButton.disabled = false;
+            message.classList.add("d-none");
+
+        }
         
         document.querySelectorAll(".calendar-day").forEach(cell=>{
             cell.classList.remove("selected");
@@ -212,7 +273,25 @@ document.getElementById("closeCalendarPanel").addEventListener("click", function
     });
 
 });
-console.log(calendarTasks);
-</script>
+document.getElementById("addTaskForDate").addEventListener("click", function () {
 
+    if (!selectedDay) return;
+
+    const month = Number("{{ month }}");
+
+    const formattedDate =
+        `${year}-${String(month).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+
+    const dueDateInput = document.querySelector(".due-date-input");
+
+    const todayString =
+        `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+
+    dueDateInput.min = todayString;
+
+    dueDateInput.value = formattedDate;
+
+});
+</script>
+{% include "todo/modals.html" %}
 {% endblock %}
